@@ -6,7 +6,7 @@ import DateTimePicker from 'react-datetime-picker';
 import Swal from 'sweetalert2';
 
 import { uiCloseModal } from '../../actions/ui';
-import { eventAddNew, eventClearActiveEvent, eventUpdated } from '../../actions/events';
+import { eventClearActiveEvent, eventStartAddNew, eventStartUpdate } from '../../actions/events';
 
 
 //*Implemenacin de modal (parametros obtenidos de npm react-modal... checar documentacion para mayor información):
@@ -103,18 +103,10 @@ function CalendarModal() {
 
         //Si tenemos un activeEvent entoces se edita ese event:
         if(activeEvent) {
-            dispatch( eventUpdated(formValues) )
+            dispatch( eventStartUpdate(formValues) )
         } else {
         //En caso contrario añadimos un evento nuevo:    
-            dispatch( eventAddNew({
-                //? De momento añadiremos un id y el usuario de esta manera, en lo que se hace la base de datos:
-                ...formValues,
-                id: new Date().getTime(),
-                user: {
-                    _id: '123',
-                    name: 'Leonardo'
-                }
-            }) );
+            dispatch( eventStartAddNew( formValues ) );
         }
         
         setTitleValid(true);

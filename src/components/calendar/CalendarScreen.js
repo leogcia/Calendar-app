@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
@@ -8,7 +8,7 @@ import { NavBar } from '../ui/NavBar';
 import CalendarEvent from './CalendarEvent';
 import CalendarModal from './CalendarModal';
 import { uiOpenModal } from '../../actions/ui';
-import { eventClearActiveEvent, eventSetActive } from '../../actions/events';
+import { evenStartLoading, eventClearActiveEvent, eventSetActive } from '../../actions/events';
 import AddNewFab from '../ui/AddNewFab';
 import DeleteEventFab from '../ui/DeleteEventFab';
 
@@ -20,9 +20,14 @@ function CalendarScreen() {
     const dispatch = useDispatch();
 
     const { events, activeEvent } = useSelector( state => state.calendar );
+    const { uid } = useSelector( state => state.auth );
     
     //ultima vista en la pagina para que al recargarla sea ahí mismo
     const [lastView, setLastView] = useState( localStorage.getItem('lastView') || 'month' );
+
+    useEffect(() => {
+        dispatch( evenStartLoading() )
+    }, []);
 
     // Evento al dar doble click
     const onDoubleClick = (e) => {
@@ -39,13 +44,13 @@ function CalendarScreen() {
     }
 
     const onSelectSlot = (e) => {
-        console.log(e)
         dispatch( eventClearActiveEvent())
     }
 
     const evenStyleGetter = ( event, start, end, isSelected ) => {
+        
         const style = {
-            backgroundColor: '#367cf7',
+            backgroundColor: (uid === event.user._id ) ? '#367cf7' : '#465660',
             borderRadius: '0px',
             opacity: 0.8,
             display: 'block',
